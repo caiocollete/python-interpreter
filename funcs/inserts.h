@@ -13,7 +13,7 @@ void inserir_no_lista_vertical(char linha[], No *lista) {
 	int cont;
 	
 	if(lista->tk != NULL) {
-		// Se entrar aqui, significa que a lista vertical não está vazia
+		// Se entrar aqui, significa que a lista vertical nÃ£o estÃ¡ vazia
 		while(lista->prox != NULL) 
 			lista = lista->prox;	
 		lista->prox = nova_caixa;
