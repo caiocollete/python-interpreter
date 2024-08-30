@@ -13,7 +13,7 @@
 #define SOMA '+'
 #define SUBTRACAO '-'
 
-// Função para verificar se um caractere é um delimitador
+// FunÃ§Ã£o para verificar se um caractere Ã© um delimitador
 int ehDelimitador(char c) {
     return c == ESPACO || c == PARENTESEAB || c == PARENTESEFECHA ||
            c == VIRGULA || c == CHAVEAB || c == CHAVEFECHA ||
