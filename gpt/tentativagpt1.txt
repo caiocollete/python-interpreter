@@ -1,5 +1,0 @@
-x = 10
-print(x)
-print("Oi")
-x = 10 + 2
-print(x)
