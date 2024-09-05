@@ -18,5 +18,5 @@ int main() {
     
 	//exibir_lista(lista);
 	exibir_variaveis(listaVar);
-    exibir_funcoes(listaFunc);
+    //exibir_funcoes(listaFunc);
 }

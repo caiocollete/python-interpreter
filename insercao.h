@@ -1,5 +1,6 @@
 #define MAX_LINHA 100
 #define MAX_TOKEN 99
+
 #define ESPACO ' '
 #define PARENTESEAB '('
 #define PARENTESEFECHA ')'
@@ -15,6 +16,7 @@
 #define SOMA '+'
 #define SUBTRACAO '-'
 #define IGUAL '='
+#define NULO '\0'
 
 typedef struct Token{
 	char token[MAX_TOKEN];
@@ -30,7 +32,7 @@ char ehDelimitador(char c) {
     return c == PARENTESEAB || c == PARENTESEFECHA ||
            c == VIRGULA || c == CHAVEAB || c == CHAVEFECHA ||
            c == COLCHETEAB || c == COLCHETEFECHA ||
-           c == DIVISOR || c == ASPAS || c == ASPASSIMPLES || c == ASTERISCO ||
+           c == DIVISOR || c == ASTERISCO ||
            c == SOMA || c == SUBTRACAO || c == IGUAL;
 }
 
@@ -64,11 +66,20 @@ void separar_string(char string_original[], char nova_string[], char token_retor
 	int cont = 0;
 	// Gera o token
 	while(cont < MAX_TOKEN - 1 && string_original[cont] != '\0' &&  !ehDelimitador(string_original[cont]) && string_original[cont] != ' ') {
-		
-		token_retornado[cont] = string_original[cont];
-		
-		cont++;
-		
+				if(string_original[cont]=='\''){
+					token_retornado[cont] = string_original[cont];
+					cont++;
+					while(string_original[cont]!='\''){
+						token_retornado[cont] = string_original[cont];
+						cont++;
+					}
+					token_retornado[cont] = string_original[cont];
+					cont++;
+				}
+				else{
+					token_retornado[cont] = string_original[cont];
+					cont++;
+				}
 	}
 	token_retornado[cont] = '\0';
 	
@@ -82,6 +93,7 @@ void separar_string(char string_original[], char nova_string[], char token_retor
 		delimitador[1]='\0';
 		cont++;
 	}
+	else delimitador[0]='\0';
 		
 	while(string_original[cont] != '\0') {
 		nova_string[i] = string_original[cont];
@@ -122,7 +134,7 @@ void inserir_no_lista_vertical(char linha[], No *lista) {
 			linha = nova_string;
 		
 			inserir_token_lista_horizontal(&(lista->tk), token_retornado);
-			if(delimitador[0]!='\0'){
+			if(delimitador[0]!='\0' && linha[0]!='\0'){
 				inserir_token_lista_horizontal(&(lista->tk), delimitador);
 			}
 	}

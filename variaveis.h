@@ -1,31 +1,43 @@
 #include <string.h>
 #define MAX_TOKEN 99
 
+typedef union{
+	char STR[MAX_TOKEN];
+	int INT;
+	float FLOAT;
+}Tipos;
+
+typedef enum{
+	INT,
+	FLOAT,
+	STRING
+}tipo_atual;
+
 typedef struct Variavel {
-    char nome[MAX_TOKEN];			// Nome da variï¿½vel
-	int valor;         				// Valor da variï¿½vel
-    struct Variavel *prox;         // Ponteiro para a prï¿½xima variï¿½vel na lista
+    char nome[MAX_TOKEN];			// Nome da variavel
+	Tipos valor;					// Valor da variavel
+	tipo_atual tipoAtual;			// Tipo atual
+    struct Variavel *prox;         // Ponteiro para a proxima variavel na lista
 } Variavel;
 
 typedef struct Funcao {
-    char nome[MAX_TOKEN];          // Nome da funï¿½ï¿½o
-    Variavel *parametros;          // Lista de parï¿½metros da funï¿½ï¿½o
-    struct Funcao *prox;           // Ponteiro para a prï¿½xima funï¿½ï¿½o na lista
+    char nome[MAX_TOKEN];          // Nome da funcao
+    Variavel *parametros;          // Lista de parametros da funcao
+    struct Funcao *prox;           // Ponteiro para a proxima funcao na lista
 } Funcao;
 
 
 void processar_tokens(No *lista, Variavel **listaVar, Funcao **listaFunc) {
     No *atual = lista;
     Variavel *parm = NULL, *aux = NULL;
-    Token *auxTk;
     char nomeFunc[MAX_TOKEN];
 
     while (atual != NULL) {
         Token *tk = atual->tk;
         while (tk != NULL) {
+
             // Identificar função
             if (strcmp(tk->token, "def") == 0 && tk->prox != NULL) {
-                // Avança para o nome da função
                 tk = tk->prox;
                 
                 // Ignora espaços em branco
@@ -42,16 +54,15 @@ void processar_tokens(No *lista, Variavel **listaVar, Funcao **listaFunc) {
 
                         while (tk != NULL && strcmp(tk->token, ")") != 0) {
                             // Ignora espaços em branco e vírgulas
-                            if (!ehDelimitador(tk->token[0]) && tk->token[0]!='\0') {
+                            if (!ehDelimitador(tk->token[0]) && tk->token[0] != '\0') {
                                 Variavel *nova_var = (Variavel*) malloc(sizeof(Variavel));
                                 strcpy(nova_var->nome, tk->token);
                                 nova_var->prox = NULL;
 
                                 if (parm == NULL) { // Primeira variável
                                     parm = nova_var;
-									aux = parm;  
-                                } 
-								else { // Próxima variável
+                                    aux = parm;  
+                                } else { // Próxima variável
                                     aux->prox = nova_var;  
                                 }
                                 aux = nova_var;  // Atualiza o auxiliar para a última variável inserida
@@ -64,35 +75,76 @@ void processar_tokens(No *lista, Variavel **listaVar, Funcao **listaFunc) {
                         inserir_funcao(listaFunc, nomeFunc, parm);
                     }
                     
-        	        // Reseta `parm` e `aux` para o próximo processamento de função
+                    // Reseta `parm` e `aux` para o próximo processamento de função
                     parm = NULL;
                     aux = NULL;
                 }
             }
             // Identificar variável
-             else if (tk->prox != NULL) {
-                Token *prox_tk = tk->prox;
-                while (prox_tk != NULL && strcmp(prox_tk->token, " ") == 0) {
-                    prox_tk = prox_tk->prox;
-                }
-                if (prox_tk != NULL && strcmp(prox_tk->token, "=") == 0) {
-                    inserir_variavel(listaVar, tk->token);
-                }
-            }
+            else if (tk->prox != NULL) {
+				int Found=0;
+				if(*listaVar!=NULL){
+					Variavel *auxLV = (*listaVar);
+					while(auxLV!=NULL && strcmp(auxLV->nome,tk->token)!=0){
+						auxLV = auxLV->prox;
+					}
+					if(auxLV!=NULL){
+						Found++;	
+					}
+				}
+				if(!Found){
+					Token *prox_tk = tk->prox;
+	
+	                // Ignorar espaços em branco
+	                while (prox_tk != NULL && strcmp(prox_tk->token, " ") == 0) {
+	                    prox_tk = prox_tk->prox;
+	                }
+	
+	                if (prox_tk != NULL && strcmp(prox_tk->token, "=") == 0) {
+	                    prox_tk = prox_tk->prox;
+	                    // Ignorar espaços em branco após "="
+	                    while (prox_tk != NULL && strcmp(prox_tk->token, " ") == 0 || prox_tk->token[0] == '\0' || strcmp(prox_tk->token, "=") == 0) {
+	                        prox_tk = prox_tk->prox;
+	                    }
+	
+	                    if (prox_tk != NULL) {
+	                        inserir_variavel(listaVar, tk->token, prox_tk->token);
+	                        tk = prox_tk;  // Avança para o próximo token após o valor
+	                    }
+	                }	
+				}
+			}
+
             tk = tk->prox;
         }
         atual = atual->prox;
     }
 }
 
-
-
-void inserir_variavel(Variavel **listaVar, char nome[]) {
-    
+void inserir_variavel(Variavel **listaVar, char nome[], char valor[]) {
     if(strcmp(nome,"")!=0){
+    	float vf;
+    	int vi;
     	Variavel *nova_variavel = (Variavel*) malloc(sizeof(Variavel));
     	strcpy(nova_variavel->nome, nome);
     	nova_variavel->prox = NULL;
+    	
+		if(valor[0]=='\''){
+    		strcpy(nova_variavel->valor.STR, valor);
+    		nova_variavel->tipoAtual=STRING;
+    	}
+    	else{
+			// ENT EH FLOAT
+			if(strchr(valor, '.') != NULL){
+				nova_variavel->valor.FLOAT=atof(valor);
+				nova_variavel->tipoAtual=FLOAT;
+			}
+			// ENT EH INT
+			else{
+				nova_variavel->valor.INT=atoi(valor);
+				nova_variavel->tipoAtual=INT;
+			}
+    	}
 
     	if (*listaVar == NULL) {
         	*listaVar = nova_variavel;
@@ -140,7 +192,12 @@ void exibir_variaveis(Variavel *listaVar) {
     Variavel *atual = listaVar;
     printf("Variaveis identificadas:\n");
     while (atual != NULL){
-        printf("- %s\n", atual->nome);
+        printf("- %s = ", atual->nome);
+        switch(atual->tipoAtual){
+        	case INT: printf("%d\n", atual->valor.INT); break;
+        	case FLOAT: printf("%f\n", atual->valor.FLOAT); break;
+        	case STRING: printf("%s\n", atual->valor.STR); break;
+        }
         atual = atual->prox;
     }
 }
