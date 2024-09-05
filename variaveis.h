@@ -194,9 +194,9 @@ void exibir_variaveis(Variavel *listaVar) {
     while (atual != NULL){
         printf("- %s = ", atual->nome);
         switch(atual->tipoAtual){
-        	case INT: printf("%d\n", atual->valor.INT); break;
-        	case FLOAT: printf("%f\n", atual->valor.FLOAT); break;
-        	case STRING: printf("%s\n", atual->valor.STR); break;
+        	case INT: printf("%d INT\n", atual->valor.INT); break;
+        	case FLOAT: printf("%f FLOAT\n", atual->valor.FLOAT); break;
+        	case STRING: printf("%s STR\n", atual->valor.STR); break;
         }
         atual = atual->prox;
     }
