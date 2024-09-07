@@ -33,6 +33,24 @@ char menu() {
 }
 
 
+char retorna_valor_da_expressao(Token *linha, Variavel *listaVar) {
+	char comparador_igualdade[3], // ==
+	comparador_diferente[3], // !=
+	comparador_maior[2], // >
+	comparador_menor[2], // < 
+	comparador_maior_igual[3], // >=
+	comparador_menor_igual[3]; // <=
+	
+	
+	
+	if(linha != NULL && (strcmp(linha->token, "if") == 0 || strcmp(linha->token, "elif") == 0)) {
+		
+	}
+	
+	return 'a';
+}
+
+
 int main() {
 	No *lista;
 	Variavel *listaVar = NULL;
@@ -64,7 +82,7 @@ int main() {
 	exibir_lista(lista);
 	gerar_todas_as_linhas_print(lista, listaVar);
 
-
+	
 
     
 	//exibir_lista(lista);
@@ -231,19 +249,16 @@ void gerar_todas_as_linhas_print(No *lista, Variavel *listaVar) {
 	while(lista != NULL) {
 		//printf("\nEntrou!");
 		aux = lista->tk;
-		while(aux != NULL) {
-			if(strcmp(aux->token, "print") == 0) {
-				
+		if(aux != NULL && strcmp(aux->token, "print") == 0) {
 				contador_de_print++;
 				print_gerado = gerar_linha_print2(aux, listaVar);
 				printf("\n%s", print_gerado);
-			}
-			
-			aux = aux->prox;
 		}
-		lista = lista->prox;
 		
+		lista = lista->prox;
+	
 	}
+	
 	
 }
 
