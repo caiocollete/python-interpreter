@@ -33,7 +33,7 @@ char ehDelimitador(char c) {
            c == VIRGULA || c == CHAVEAB || c == CHAVEFECHA ||
            c == COLCHETEAB || c == COLCHETEFECHA ||
            c == DIVISOR || c == ASTERISCO ||
-           c == SOMA || c == SUBTRACAO || c == IGUAL;
+           c == SOMA || c == SUBTRACAO || c == IGUAL || c == ASPAS;
 }
 
 int ehEspaco(char c){

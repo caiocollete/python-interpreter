@@ -1,78 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <conio2.h>
 
-#include "insercao.h"
 #include "variaveis.h"
-#include "executa.h"
-//#include "print.h"
-
-void gerar_todas_as_linhas_print(No *lista, Variavel *listaVar);
-char* gerar_linha_print2(Token *linha, Variavel *listaVar);
-Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, int posicao);
-Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]);
-
-
-char menu() {
-	char esc;
-	
-	system("cls");
-	
-	printf("\n==== MENU ====\n");
-	printf("[A] - Executar Codigo\n");
-	printf("[B] - Exibir RAM\n");
-	printf("[C] - Exibe Lista\n\n");
-	
-	
-	printf("-> "); scanf("%c",&esc);
-	
-	system("cls");
-	return tolower(esc);
-}
-
-
-int main() {
-	No *lista;
-	Variavel *listaVar = NULL;
-    Funcao *listaFunc = NULL;
-    char esc;
-	
-	inicializar(&lista);
-	inserir_a_partir_de_arquivo(lista, "ex.py");
-	//Processar a lista para identificar variaveis e funcoes
-	processar_tokens(lista, &listaVar, &listaFunc);
-	
-	/*do{
-		switch(menu()){
-			case 'b': 	exibir_variaveis(listaVar);
-						printf("\n");
-						exibir_funcoes(listaFunc);
-						break;
-			case 'a': executaCodigo(lista,listaVar,listaFunc); break;
-			case 'c': exibir_lista(lista);
-		}
-		scanf("%c",&esc);
-		esc=tolower(esc);
-		getch();
-		
-	}while(esc!='s');*/
-	
-	// TESTE
-	
-	exibir_lista(lista);
-	gerar_todas_as_linhas_print(lista, listaVar);
-
-
-
-    
-	//exibir_lista(lista);
-	//exibir_variaveis(listaVar);
-    //exibir_funcoes(listaFunc);
-}
-
-
+#include "insercao.h"
 
 Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]) {
 	Variavel aux;
