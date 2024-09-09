@@ -17,6 +17,7 @@
 #define SUBTRACAO '-'
 #define IGUAL '='
 #define NULO '\0'
+#define DOIS_PONTOS ':'
 
 typedef struct Token{
 	char token[MAX_TOKEN];
@@ -33,7 +34,7 @@ char ehDelimitador(char c) {
            c == VIRGULA || c == CHAVEAB || c == CHAVEFECHA ||
            c == COLCHETEAB || c == COLCHETEFECHA ||
            c == DIVISOR || c == ASTERISCO ||
-           c == SOMA || c == SUBTRACAO || c == IGUAL || c == ASPAS;
+           c == SOMA || c == SUBTRACAO || c == IGUAL || c == ASPAS || c == DOIS_PONTOS;
 }
 
 int ehEspaco(char c){

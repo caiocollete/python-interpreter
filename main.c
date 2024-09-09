@@ -32,8 +32,21 @@ char menu() {
 	return tolower(esc);
 }
 
+int isInteger(const char *str) {
+    char *endptr;
+    strtol(str, &endptr, 10);
+    return *endptr == '\0';
+}
 
-char retorna_valor_da_expressao(Token *linha, Variavel *listaVar) {
+int isFloat(const char *str) {
+    char *endptr;
+    strtod(str, &endptr);
+    return *endptr == '\0';
+}
+
+
+
+char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 	char comparador_igualdade[3], // ==
 	comparador_diferente[3], // !=
 	comparador_maior[2], // >
@@ -41,14 +54,148 @@ char retorna_valor_da_expressao(Token *linha, Variavel *listaVar) {
 	comparador_maior_igual[3], // >=
 	comparador_menor_igual[3]; // <=
 	
+	strcpy(comparador_igualdade, "==");
+	strcpy(comparador_diferente, "!=");
+    strcpy(comparador_maior, ">");
+    strcpy(comparador_menor, "<");
+    strcpy(comparador_maior_igual, ">=");
+    strcpy(comparador_menor_igual, "<=");
 	
+	Tipos valor_do_operando1;
+	Tipos valor_do_operando2;
+	tipo_atual tipo_do_operando1;
+	tipo_atual tipo_do_operando2;
+	char comparador_utilizado[3];
+	strcpy(comparador_utilizado, "");
+
 	
+	// Verifica se a linha não é NULL e se realmente é um if ou elif
+	//printf("\neh um if");
 	if(linha != NULL && (strcmp(linha->token, "if") == 0 || strcmp(linha->token, "elif") == 0)) {
+		
+		linha = linha->prox;
+		
+		// Vai chegar no primeiro token da comparação
+		// Esse while é necessário caso haja '\0' ou espaços em branco na linha
+		while(linha != NULL && strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0) {
+			linha = linha->prox;
+			
+		}
+		
+		// Esse bloco de código é responsável por pegar o primeiro operando (o operando que está à esquerda do operador, ex:
+		// 1 == 2     Esse bloco de código irá pegar o 1
+		// Aqui irá pegar o primeiro operando
+		// Verifica se é uma string
+		if(strcmp(linha->token, "\"") == 0) {
+			// Se for uma string, irá armazená-la
+		
+			tipo_do_operando1 = STRING;
+			char string_a_armazenar[MAX_TOKEN];
+			strcpy(string_a_armazenar, "");
+			linha = linha->prox;
+			while(strcmp(linha->token, "\"") != 0) {
+				strcat(string_a_armazenar, linha->token);
+				strcat(string_a_armazenar, " ");
+				linha = linha->prox;
+			}
+			strcpy(valor_do_operando1.STR, string_a_armazenar);
+			printf("Operando1 = %s", valor_do_operando1.STR);
+			linha = linha->prox;
+		} else {
+			// Se não for string, só pode ser um número e aí é necessário descobrir se é inteiro ou float
+			// Se for para o else, então é float, porque não é inteiro e nem string
+			if(isInteger(linha->token)) {
+				tipo_do_operando1 = INT;
+				valor_do_operando1.INT = atoi(linha->token);
+				printf("\nOperando1 = %d", valor_do_operando1.INT);
+			} else {
+				tipo_do_operando1 = FLOAT;
+				valor_do_operando1.FLOAT = atof(linha->token);
+				printf("\nOperando1 = %f", valor_do_operando1.FLOAT);
+			}
+		}
+		
+		linha = linha->prox;
+		// Esse bloco de código irá pegar o operador, em 1 == 2 vai pegar ==
+		// Esse while é necessário caso haja '\0' ou espaços em branco na linha após o primeiro operando
+		while(linha != NULL && strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0) {
+			linha = linha->prox;
+			
+		}
+		
+		// Esse bloco de código irá armazenar o comparador
+		// Como nossa lista está armazenado '\0' e espaços em branco, é necessário verificar um por um senão o código não roda
+		// O token == está sendo armazenado como = -> -> = , então ele será verificado primeiro
+		//Se entrar no if, significa que é o == e será preciso armazená-lo
+		if(strcmp(linha->token, "=") == 0) {
+			strcat(comparador_utilizado, linha->token);
+			while(linha != NULL && strcmp(linha->token, "=") != 0) {
+				linha = linha->prox;
+			}
+			strcat(comparador_utilizado, linha->token);
+			linha = linha->prox;
+			linha = linha->prox;
+		} else if ((strcmp(linha->token, ">") == 0 || strcmp(linha->token, "<") == 0) && (strcmp(linha->prox->token, "=") != 0)) {
+			// O comparador < e > não tem '\0' nem espaço em branco após
+			strcat(comparador_utilizado, linha->token);
+		} else {
+			// Os comparadores restantes agem da mesma forma, tem '\0' ou espaço em branco após eles
+			while(linha != NULL && strcmp(linha->token, " ") != 0 && strcmp(linha->token, "\0") != 0) {
+			strcat(comparador_utilizado, linha->token);
+			linha = linha->prox;
+			}
+		}
+
+		printf("\nComparador %s", comparador_utilizado);
+		
+		// Agora irá pegar o segundo operador
+		linha = linha->prox;
+		// Esse while é necessário caso haja '\0' ou espaços em branco na linha após o primeiro operando
+		while(linha != NULL && (strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0)) {
+			linha = linha->prox;
+			
+		}
+		
+		if(strcmp(linha->token, "\"") == 0) {
+			
+			// Se for uma string, irá armazená-la
+		
+			tipo_do_operando2 = STRING;
+			char string_a_armazenar[MAX_TOKEN];
+			strcpy(string_a_armazenar, "");
+			linha = linha->prox;
+			while(strcmp(linha->token, "\"") != 0) {
+				strcat(string_a_armazenar, linha->token);
+				strcat(string_a_armazenar, " ");
+				linha = linha->prox;
+			}
+			strcpy(valor_do_operando2.STR, string_a_armazenar);
+			printf("\nOperando2 = %s", valor_do_operando2.STR);
+		} else {
+			// Se não for string, só pode ser um número e aí é necessário descobrir se é inteiro ou float
+			// Se for para o else, então é float, porque não é inteiro e nem string
+			if(isInteger(linha->token)) {
+				tipo_do_operando2 = INT;
+				valor_do_operando2.INT = atoi(linha->token);
+				printf("\nOperando2 = %d", valor_do_operando2.INT);
+			} else {
+				tipo_do_operando2 = FLOAT;
+				valor_do_operando2.FLOAT = atof(linha->token);
+				printf("\nOperando2 = %f", valor_do_operando2.FLOAT);
+			}
+		}
+		
+		
+		
+		
+		
 		
 	}
 	
-	return 'a';
+	return '\n';
 }
+
+
 
 
 int main() {
@@ -58,7 +205,7 @@ int main() {
     char esc;
 	
 	inicializar(&lista);
-	inserir_a_partir_de_arquivo(lista, "ex.py");
+	inserir_a_partir_de_arquivo(lista, "teste.py");
 	//Processar a lista para identificar variaveis e funcoes
 	processar_tokens(lista, &listaVar, &listaFunc);
 	
@@ -82,6 +229,11 @@ int main() {
 	exibir_lista(lista);
 	gerar_todas_as_linhas_print(lista, listaVar);
 
+	while(lista != NULL) {
+		printf("\n%c", retornar_valor_de_apenas_uma_comparacao(lista->tk, listaVar));
+		lista = lista->prox;
+	}
+	
 	
 
     
