@@ -45,22 +45,100 @@ int isFloat(const char *str) {
 }
 
 
+char realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_atual tipo_operando2, Tipos valor_operando2, char comparador[]) {
+    char comparador_igualdade[3],   // ==
+    comparador_diferenca[3],    // !=
+    comparador_maior[2],        // >
+    comparador_menor[2],        // <
+    comparador_maior_igual[3],  // >=
+    comparador_menor_igual[3];  // <=
 
-char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
-	char comparador_igualdade[3], // ==
-	comparador_diferente[3], // !=
-	comparador_maior[2], // >
-	comparador_menor[2], // < 
-	comparador_maior_igual[3], // >=
-	comparador_menor_igual[3]; // <=
-	
-	strcpy(comparador_igualdade, "==");
-	strcpy(comparador_diferente, "!=");
+    strcpy(comparador_igualdade, "==");
+    strcpy(comparador_diferenca, "!=");
     strcpy(comparador_maior, ">");
     strcpy(comparador_menor, "<");
     strcpy(comparador_maior_igual, ">=");
     strcpy(comparador_menor_igual, "<=");
-	
+
+    // Faz as comparações caso ambos sejam inteiros
+    if (tipo_operando1 == INT && tipo_operando2 == INT) {
+        if (strcmp(comparador, comparador_igualdade) == 0)
+            return (valor_operando1.INT == valor_operando2.INT);
+        else if (strcmp(comparador, comparador_diferenca) == 0)
+            return (valor_operando1.INT != valor_operando2.INT);
+        else if (strcmp(comparador, comparador_maior) == 0)
+            return (valor_operando1.INT > valor_operando2.INT);
+        else if (strcmp(comparador, comparador_menor) == 0)
+            return (valor_operando1.INT < valor_operando2.INT);
+        else if (strcmp(comparador, comparador_maior_igual) == 0)
+            return (valor_operando1.INT >= valor_operando2.INT);
+        else if (strcmp(comparador, comparador_menor_igual) == 0)
+            return (valor_operando1.INT <= valor_operando2.INT);
+
+    } else if (tipo_operando1 == FLOAT && tipo_operando2 == FLOAT) {
+        if (strcmp(comparador, comparador_igualdade) == 0)
+            return (valor_operando1.FLOAT == valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_diferenca) == 0)
+            return (valor_operando1.FLOAT != valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_maior) == 0)
+            return (valor_operando1.FLOAT > valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_menor) == 0)
+            return (valor_operando1.FLOAT < valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_maior_igual) == 0)
+            return (valor_operando1.FLOAT >= valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_menor_igual) == 0)
+            return (valor_operando1.FLOAT <= valor_operando2.FLOAT);
+    } else if (tipo_operando1 == INT && tipo_operando2 == FLOAT) {
+        if (strcmp(comparador, comparador_igualdade) == 0)
+            return (valor_operando1.INT == valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_diferenca) == 0)
+            return (valor_operando1.INT != valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_maior) == 0)
+            return (valor_operando1.INT > valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_menor) == 0)
+            return (valor_operando1.INT < valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_maior_igual) == 0)
+            return (valor_operando1.INT >= valor_operando2.FLOAT);
+        else if (strcmp(comparador, comparador_menor_igual) == 0)
+            return (valor_operando1.INT <= valor_operando2.FLOAT);
+    } else if (tipo_operando1 == FLOAT && tipo_operando2 == INT) {
+        if (strcmp(comparador, comparador_igualdade) == 0)
+            return (valor_operando1.FLOAT == valor_operando2.INT);
+        else if (strcmp(comparador, comparador_diferenca) == 0)
+            return (valor_operando1.FLOAT != valor_operando2.INT);
+        else if (strcmp(comparador, comparador_maior) == 0)
+            return (valor_operando1.FLOAT > valor_operando2.INT);
+        else if (strcmp(comparador, comparador_menor) == 0)
+            return (valor_operando1.FLOAT < valor_operando2.INT);
+        else if (strcmp(comparador, comparador_maior_igual) == 0)
+            return (valor_operando1.FLOAT >= valor_operando2.INT);
+        else if (strcmp(comparador, comparador_menor_igual) == 0)
+            return (valor_operando1.FLOAT <= valor_operando2.INT);
+    } else if (tipo_operando1 == STRING && tipo_operando2 == STRING) {
+        if (strcmp(comparador, comparador_igualdade) == 0)
+            return !strcmp(valor_operando1.STR, valor_operando2.STR);
+        else if (strcmp(comparador, comparador_diferenca) == 0)
+            return !strcmp(valor_operando1.STR, valor_operando2.STR);
+        else if (strcmp(comparador, comparador_maior) == 0)
+            return (strcmp(valor_operando1.STR, valor_operando2.STR) > 0);
+        else if (strcmp(comparador, comparador_menor) == 0)
+            return (strcmp(valor_operando1.STR, valor_operando2.STR) < 0);
+        else if (strcmp(comparador, comparador_maior_igual) == 0)
+            return (strcmp(valor_operando1.STR, valor_operando2.STR) >= 0);
+        else if (strcmp(comparador, comparador_menor_igual) == 0)
+            return (strcmp(valor_operando1.STR, valor_operando2.STR) <= 0);
+    }
+
+    return -1;  // Esse valor é retornado caso não seja possível concluir se uma expressão é verdadeira ou falsa
+}
+
+
+
+char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
+	// Essa função é responsável por separar os operadores de uma comparação, por exemplo: 1 == 4
+	// Ela irá separar os tokens [1, ==, 4] e, após separá-los, irá jogá-los em uma função que retorna o valor dessa comparação
+	// E aí a função atual irá retornar o valor
+
 	Tipos valor_do_operando1;
 	Tipos valor_do_operando2;
 	tipo_atual tipo_do_operando1;
@@ -102,16 +180,27 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 			printf("Operando1 = %s", valor_do_operando1.STR);
 			linha = linha->prox;
 		} else {
-			// Se não for string, só pode ser um número e aí é necessário descobrir se é inteiro ou float
+			// Se não for string, só pode ser um número ou uma variável
 			// Se for para o else, então é float, porque não é inteiro e nem string
 			if(isInteger(linha->token)) {
 				tipo_do_operando1 = INT;
 				valor_do_operando1.INT = atoi(linha->token);
 				printf("\nOperando1 = %d", valor_do_operando1.INT);
-			} else {
+			} else if(isFloat(linha->token)){
 				tipo_do_operando1 = FLOAT;
 				valor_do_operando1.FLOAT = atof(linha->token);
 				printf("\nOperando1 = %f", valor_do_operando1.FLOAT);
+			} else {
+				Variavel var = procurar_variavel_print(listaVar, linha->token);
+				tipo_do_operando1 = var.tipoAtual;
+				if(tipo_do_operando1 == FLOAT) {
+					valor_do_operando1.FLOAT = var.valor.FLOAT;
+				} else if (tipo_do_operando1 == INT) {
+					valor_do_operando1.INT = var.valor.INT;
+				} else {
+					strcpy(valor_do_operando1.STR, var.valor.STR);
+				}
+				printf("\nOperando1 = %d", valor_do_operando1);
 			}
 		}
 		
@@ -148,7 +237,7 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 
 		printf("\nComparador %s", comparador_utilizado);
 		
-		// Agora irá pegar o segundo operador
+		// Esse próximo bloco de código é responsável por pegar o segundo operando
 		linha = linha->prox;
 		// Esse while é necessário caso haja '\0' ou espaços em branco na linha após o primeiro operando
 		while(linha != NULL && (strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0)) {
@@ -178,13 +267,26 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 				tipo_do_operando2 = INT;
 				valor_do_operando2.INT = atoi(linha->token);
 				printf("\nOperando2 = %d", valor_do_operando2.INT);
-			} else {
+			} else if(isFloat(linha->token)) {
 				tipo_do_operando2 = FLOAT;
 				valor_do_operando2.FLOAT = atof(linha->token);
 				printf("\nOperando2 = %f", valor_do_operando2.FLOAT);
+			} else {
+				Variavel var = procurar_variavel_print(listaVar, linha->token);
+				tipo_do_operando2 = var.tipoAtual;
+				if(tipo_do_operando2 == FLOAT) {
+					valor_do_operando2.FLOAT = var.valor.FLOAT;
+				} else if (tipo_do_operando2 == INT) {
+					valor_do_operando2.INT = var.valor.INT;
+				} else {
+					strcpy(valor_do_operando2.STR, var.valor.STR);
+				}
+				printf("\nOperando2 = %d", valor_do_operando2);
 			}
 		}
 		
+		
+		printf("\n Resultado da operacao: %d", realizar_comparacao(tipo_do_operando1, valor_do_operando1, tipo_do_operando2, valor_do_operando2, comparador_utilizado));
 		
 		
 		
@@ -192,8 +294,11 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 		
 	}
 	
-	return '\n';
+	return realizar_comparacao(tipo_do_operando1, valor_do_operando1, tipo_do_operando2, valor_do_operando2, comparador_utilizado);
 }
+
+
+
 
 
 
