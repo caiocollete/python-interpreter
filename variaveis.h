@@ -24,6 +24,7 @@ typedef struct Funcao {
     char nome[MAX_TOKEN];          // Nome da funcao
     Variavel *parametros;          // Lista de parametros da funcao
     struct Funcao *prox;           // Ponteiro para a proxima funcao na lista
+    No *starts;
 } Funcao;
 
 
@@ -72,7 +73,7 @@ void processar_tokens(No *lista, Variavel **listaVar, Funcao **listaFunc) {
                     }
 
                     if (nomeFunc[0] != '\0') { // Verificação adicional
-                        inserir_funcao(listaFunc, nomeFunc, parm);
+                        inserir_funcao(listaFunc, nomeFunc, parm, atual);
                     }
                     
                     // Reseta `parm` e `aux` para o próximo processamento de função
@@ -160,7 +161,7 @@ void inserir_variavel(Variavel **listaVar, char nome[], char valor[]) {
 }
 
 
-void inserir_funcao(Funcao **listaFunc, char nome[], Variavel *parametros) {
+void inserir_funcao(Funcao **listaFunc, char nome[], Variavel *parametros, No *linhaStart) {
     Funcao *nova_funcao = (Funcao*) malloc(sizeof(Funcao));
     if (nova_funcao == NULL) {
         // Tratamento de erro de alocação de memória
@@ -171,6 +172,7 @@ void inserir_funcao(Funcao **listaFunc, char nome[], Variavel *parametros) {
     nova_funcao->nome[MAX_TOKEN - 1] = '\0';  // Garantir terminação da string
     nova_funcao->parametros = parametros;
     nova_funcao->prox = NULL;
+    nova_funcao->starts=linhaStart;
 
     if (*listaFunc == NULL) {
         *listaFunc = nova_funcao;
