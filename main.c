@@ -14,7 +14,6 @@ char* gerar_linha_print2(Token *linha, Variavel *listaVar);
 Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, int posicao);
 Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]);
 
-
 char menu() {
 	char esc;
 	
@@ -45,7 +44,7 @@ int isFloat(const char *str) {
 }
 
 
-char realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_atual tipo_operando2, Tipos valor_operando2, char comparador[]) {
+int realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_atual tipo_operando2, Tipos valor_operando2, char comparador[]) {
     char comparador_igualdade[3],   // ==
     comparador_diferenca[3],    // !=
     comparador_maior[2],        // >
@@ -60,7 +59,7 @@ char realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_
     strcpy(comparador_maior_igual, ">=");
     strcpy(comparador_menor_igual, "<=");
 
-    // Faz as comparações caso ambos sejam inteiros
+    // Faz as compara??es caso ambos sejam inteiros
     if (tipo_operando1 == INT && tipo_operando2 == INT) {
         if (strcmp(comparador, comparador_igualdade) == 0)
             return (valor_operando1.INT == valor_operando2.INT);
@@ -133,15 +132,15 @@ char realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_
             return (strcmp(valor_operando1.STR, valor_operando2.STR) <= 0);
     }
 
-    return -1;  // Esse valor é retornado caso não seja possível concluir se uma expressão é verdadeira ou falsa
+    return -1;  // Esse valor ? retornado caso n?o seja poss?vel concluir se uma express?o ? verdadeira ou falsa
 }
 
 
 
 char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
-	// Essa função é responsável por separar os operadores de uma comparação, por exemplo: 1 == 4
-	// Ela irá separar os tokens [1, ==, 4] e, após separá-los, irá jogá-los em uma função que retorna o valor dessa comparação
-	// E aí a função atual irá retornar o valor
+	// Essa fun??o ? respons?vel por separar os operadores de uma compara??o, por exemplo: 1 == 4
+	// Ela ir? separar os tokens [1, ==, 4] e, ap?s separ?-los, ir? jog?-los em uma fun??o que retorna o valor dessa compara??o
+	// E a? a fun??o atual ir? retornar o valor
 
 	Tipos valor_do_operando1;
 	Tipos valor_do_operando2;
@@ -151,25 +150,25 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 	strcpy(comparador_utilizado, "");
 
 	
-	// Verifica se a linha não é NULL e se realmente é um if ou elif
+	// Verifica se a linha n?o ? NULL e se realmente ? um if ou elif
 	//printf("\neh um if");
 	if(linha != NULL && (strcmp(linha->token, "if") == 0 || strcmp(linha->token, "elif") == 0)) {
 		
 		linha = linha->prox;
 		
-		// Vai chegar no primeiro token da comparação
-		// Esse while é necessário caso haja '\0' ou espaços em branco na linha
+		// Vai chegar no primeiro token da compara??o
+		// Esse while ? necess?rio caso haja '\0' ou espa?os em branco na linha
 		while(linha != NULL && strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0) {
 			linha = linha->prox;
 			
 		}
 		
-		// Esse bloco de código é responsável por pegar o primeiro operando (o operando que está à esquerda do operador, ex:
-		// 1 == 2     Esse bloco de código irá pegar o 1
-		// Aqui irá pegar o primeiro operando
-		// Verifica se é uma string
+		// Esse bloco de c?digo ? respons?vel por pegar o primeiro operando (o operando que est? ? esquerda do operador, ex:
+		// 1 == 2     Esse bloco de c?digo ir? pegar o 1
+		// Aqui ir? pegar o primeiro operando
+		// Verifica se ? uma string
 		if(strcmp(linha->token, "\"") == 0) {
-			// Se for uma string, irá armazená-la
+			// Se for uma string, ir? armazen?-la
 		
 			tipo_do_operando1 = STRING;
 			char string_a_armazenar[MAX_TOKEN];
@@ -184,8 +183,8 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 			printf("Operando1 = %s", valor_do_operando1.STR);
 			linha = linha->prox;
 		} else {
-			// Se não for string, só pode ser um número ou uma variável
-			// Se for para o else, então é float, porque não é inteiro e nem string
+			// Se n?o for string, s? pode ser um n?mero ou uma vari?vel
+			// Se for para o else, ent?o ? float, porque n?o ? inteiro e nem string
 			if(isInteger(linha->token)) {
 				tipo_do_operando1 = INT;
 				valor_do_operando1.INT = atoi(linha->token);
@@ -209,17 +208,17 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 		}
 		
 		linha = linha->prox;
-		// Esse bloco de código irá pegar o operador, em 1 == 2 vai pegar ==
-		// Esse while é necessário caso haja '\0' ou espaços em branco na linha após o primeiro operando
+		// Esse bloco de c?digo ir? pegar o operador, em 1 == 2 vai pegar ==
+		// Esse while ? necess?rio caso haja '\0' ou espa?os em branco na linha ap?s o primeiro operando
 		while(linha != NULL && strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0) {
 			linha = linha->prox;
 			
 		}
 		
-		// Esse bloco de código irá armazenar o comparador
-		// Como nossa lista está armazenado '\0' e espaços em branco, é necessário verificar um por um senão o código não roda
-		// O token == está sendo armazenado como = -> -> = , então ele será verificado primeiro
-		//Se entrar no if, significa que é o == e será preciso armazená-lo
+		// Esse bloco de c?digo ir? armazenar o comparador
+		// Como nossa lista est? armazenado '\0' e espa?os em branco, ? necess?rio verificar um por um sen?o o c?digo n?o roda
+		// O token == est? sendo armazenado como = -> -> = , ent?o ele ser? verificado primeiro
+		//Se entrar no if, significa que ? o == e ser? preciso armazen?-lo
 		if(strcmp(linha->token, "=") == 0) {
 			strcat(comparador_utilizado, linha->token);
 			while(linha != NULL && strcmp(linha->token, "=") != 0) {
@@ -229,10 +228,10 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 			linha = linha->prox;
 			linha = linha->prox;
 		} else if ((strcmp(linha->token, ">") == 0 || strcmp(linha->token, "<") == 0) && (strcmp(linha->prox->token, "=") != 0)) {
-			// O comparador < e > não tem '\0' nem espaço em branco após
+			// O comparador < e > n?o tem '\0' nem espa?o em branco ap?s
 			strcat(comparador_utilizado, linha->token);
 		} else {
-			// Os comparadores restantes agem da mesma forma, tem '\0' ou espaço em branco após eles
+			// Os comparadores restantes agem da mesma forma, tem '\0' ou espa?o em branco ap?s eles
 			while(linha != NULL && strcmp(linha->token, " ") != 0 && strcmp(linha->token, "\0") != 0) {
 			strcat(comparador_utilizado, linha->token);
 			linha = linha->prox;
@@ -241,9 +240,9 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 
 		printf("\nComparador %s", comparador_utilizado);
 		
-		// Esse próximo bloco de código é responsável por pegar o segundo operando
+		// Esse pr?ximo bloco de c?digo ? respons?vel por pegar o segundo operando
 		linha = linha->prox;
-		// Esse while é necessário caso haja '\0' ou espaços em branco na linha após o primeiro operando
+		// Esse while ? necess?rio caso haja '\0' ou espa?os em branco na linha ap?s o primeiro operando
 		while(linha != NULL && (strcmp(linha->token, " ") == 0 || strcmp(linha->token, "\0") == 0)) {
 			linha = linha->prox;
 			
@@ -251,7 +250,7 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 		
 		if(strcmp(linha->token, "\"") == 0) {
 			
-			// Se for uma string, irá armazená-la
+			// Se for uma string, ir? armazen?-la
 		
 			tipo_do_operando2 = STRING;
 			char string_a_armazenar[MAX_TOKEN];
@@ -265,8 +264,8 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 			strcpy(valor_do_operando2.STR, string_a_armazenar);
 			printf("\nOperando2 = %s", valor_do_operando2.STR);
 		} else {
-			// Se não for string, só pode ser um número e aí é necessário descobrir se é inteiro ou float
-			// Se for para o else, então é float, porque não é inteiro e nem string
+			// Se n?o for string, s? pode ser um n?mero e a? ? necess?rio descobrir se ? inteiro ou float
+			// Se for para o else, ent?o ? float, porque n?o ? inteiro e nem string
 			if(isInteger(linha->token)) {
 				tipo_do_operando2 = INT;
 				valor_do_operando2.INT = atoi(linha->token);
@@ -350,11 +349,11 @@ int main() {
 
 Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]) {
 	Variavel aux;
-	// Já é atribuído o nome de undefined para o caso de não encontrar a variável na lista de variáveis
+	// J? ? atribu?do o nome de undefined para o caso de n?o encontrar a vari?vel na lista de vari?veis
 	strcpy(aux.nome, "undefined");
-	// Verifica se a variável a ser procurada está na lista
+	// Verifica se a vari?vel a ser procurada est? na lista
 	while(listaVar != NULL) {
-		// Se encontrar a variável, vai copiar para aux
+		// Se encontrar a vari?vel, vai copiar para aux
 		if(strcmp(nome_variavel_a_ser_procurada, listaVar->nome) == 0) {
 			// Copia o nome
 			strcpy(aux.nome, listaVar->nome);
@@ -379,9 +378,9 @@ Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_pr
 
 Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, int posicao) {
 	// Vai chegar no segundo "
-	char nome_variavel_encontrada[10]; // É o nome da variável que está após o %
-	char literal_string[40]; // Essa variável será necessária quando, por exemplo, printf("%s", "7")
-	Variavel var; // É a variável que será retornada
+	char nome_variavel_encontrada[10]; // ? o nome da vari?vel que est? ap?s o %
+	char literal_string[40]; // Essa vari?vel ser? necess?ria quando, por exemplo, printf("%s", "7")
+	Variavel var; // ? a vari?vel que ser? retornada
 	int encontrou_a_variavel = 0;
 	while(linha != NULL && strcmp(linha->token, "\"") != 0)
 		linha = linha->prox;
@@ -394,12 +393,12 @@ Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, i
 		if(linha != NULL)
 			linha = linha->prox; // Estamos pulando o (
 		
-		// Agora precisa andar até o argumento que está em int posição
+		// Agora precisa andar at? o argumento que est? em int posi??o
 		int i = 0;
 		while(i < posicao) {
 			linha = linha->prox;
 			if(strcmp(linha->token, ",") != 0 && strcmp(linha->token, "\0") != 0 && strcmp(linha->token, " ") != 0 && strcmp(linha->token, ")")) { 
-			// Esse if é necessário para não contabilizar as  vírgulas, \0 , espaços em branco e )
+			// Esse if ? necess?rio para n?o contabilizar as  v?rgulas, \0 , espa?os em branco e )
 				i++;
 			}
 			
@@ -435,26 +434,26 @@ Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, i
 
 char* gerar_linha_print2(Token *linha, Variavel *listaVar) {
 	
-	char print_gerado[MAX_LINHA]; // É a string que será retornada
-	strcpy(print_gerado, ""); // Retornará uma string vazia caso aux == NULL ou não seja um print
+	char print_gerado[MAX_LINHA]; // ? a string que ser? retornada
+	strcpy(print_gerado, ""); // Retornar? uma string vazia caso aux == NULL ou n?o seja um print
 	Token *aux = linha;
-	Token *aux2; // É a variável que irá procurar os argumentos após o % em print("..." % (...))
-	int contador_posicao = 0; // Irá contar quantos %d %s %f tem, para saber qual deve ser procurado após o %
+	Token *aux2; // ? a vari?vel que ir? procurar os argumentos ap?s o % em print("..." % (...))
+	int contador_posicao = 0; // Ir? contar quantos %d %s %f tem, para saber qual deve ser procurado ap?s o %
 	
-	// Esse primeiro if irá verificar se a variável que guarda os tokens não é NULL e se realmente é uma linha que tem print
+	// Esse primeiro if ir? verificar se a vari?vel que guarda os tokens n?o ? NULL e se realmente ? uma linha que tem print
 	if(aux != NULL && strcmp(aux->token, "print") == 0) {
 		// Todos os prints tem essa estrutura print("..." % )
-		// Caso entre aqui, a condição de parada será chegar no segundo "
-		// Para isso, precisa-se pular o ( e " primeiro, porque senão irá parar nesse primeiro "
+		// Caso entre aqui, a condi??o de parada ser? chegar no segundo "
+		// Para isso, precisa-se pular o ( e " primeiro, porque sen?o ir? parar nesse primeiro "
 		while(strcmp(aux->token, "\"") != 0)
 			aux = aux->prox;
-		aux = aux->prox; // O token que estava armazenado ao sair do while era o ", então já pulamos um pra frente	
+		aux = aux->prox; // O token que estava armazenado ao sair do while era o ", ent?o j? pulamos um pra frente	
 		
-		// A condição de parada desse while será o próximo " , pois o que vier depois dele só é necessário
+		// A condi??o de parada desse while ser? o pr?ximo " , pois o que vier depois dele s? ? necess?rio
 		// para descobrir quais os valores dos %d %s %f caso tenham
 		while(strcmp(aux->token, "\"") != 0) {
 			
-			// Aqui é onde será tratado caso encontre %d %s %f
+			// Aqui ? onde ser? tratado caso encontre %d %s %f
 			if(strcmp(aux->token, "%d") == 0 || strcmp(aux->token, "%s") == 0 || strcmp(aux->token, "%f") == 0 ) {
 				aux2 = aux;
 				Variavel var_encontrada = encontrar_a_variavel_apos_o_percent(aux, listaVar, contador_posicao);
@@ -482,7 +481,7 @@ char* gerar_linha_print2(Token *linha, Variavel *listaVar) {
 				
 				
 			} else {
-				// Aqui é onde concatena na string a ser gerada caso não seja %d %s e %f
+				// Aqui ? onde concatena na string a ser gerada caso n?o seja %d %s e %f
 				strcat(print_gerado, aux->token);
 				strcat(print_gerado, " ");
 			}

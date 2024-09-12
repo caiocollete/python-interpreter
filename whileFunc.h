@@ -1,3 +1,28 @@
+void executar_while(Token *linha, Variavel *listaVar, No *L);
+
+void executar_linha(Token *linha, Variavel *listaVar, No *bloco){
+ 	while(linha!=NULL){
+ 		if(strcmp(linha->token,"while")==0){
+ 			executarWhile(linha,listaVar,bloco);
+ 		}
+ 		if(strcmp(linha->token,"if")==0)
+ 		if(strcmp(linha->token,"elif")==0)
+ 		if(strcmp(linha->token,"else")==0)
+ 		if(strcmp(linha->token,"for")==0)	
+ 		if(!ehDemilimitador(linha->token)) // eh palavra
+		// continuar
+ 	}
+ }
+
+// funcao que executa o bloco de codigo dentro do while
+void executar_bloco(No *bloco, Variavel *listaVar) {
+    // Percorre cada linha do bloco e executa a funcao correspondente
+    while (bloco != NULL) {
+        executar_linha(bloco->tk, listaVar, bloco); // TEMOS QUE FAZER A LINHA AINDA
+        bloco = bloco->prox;
+    }
+}
+
 void executar_while(Token *linha, Variavel *listaVar, No *L) {
     No *blocoDeExec,*auxBlocoExec;
 	Token *auxLinha;
@@ -33,7 +58,7 @@ void executar_while(Token *linha, Variavel *listaVar, No *L) {
 		else if(isInteger(auxLinha->token) || isFloat(auxLinha->token)){
 			Variavel *nova_variavel = (Variavel*)malloc(sizeof(Variavel));
 			
-			strcp(nova_variavel->nome,auxLinha->token);
+			strcpy(nova_variavel->nome,auxLinha->token);
 			
 			if(strchr(auxLinha->token, '.') != NULL){
 				nova_variavel->valor.FLOAT=atof(auxLinha->token);
@@ -116,18 +141,8 @@ void executar_while(Token *linha, Variavel *listaVar, No *L) {
     
     
     while (realizar_comparacao(varsWhile->tipoAtual, varsWhile->valor, varsWhile->prox->tipoAtual, varsWhile->prox->valor, comparador)) {
-        // Enquanto a condição for verdadeira, executamos o bloco de código
+        // Enquanto a condicao for verdadeira, executamos o bloco de codigo
         executar_bloco(blocoDeExec, varsWhile);
-    }
-}
-
-// Função que executa o bloco de código dentro do while
-void executar_bloco(No *bloco, Variavel *listaVar) {
-    // Percorre cada linha do bloco e executa a função correspondente
-    while (bloco != NULL) {
-        // Assumindo que há uma função para executar cada linha de código, pode ser uma função genérica
-        executar_linha(bloco->tk, listaVar); // TEMOS QUE FAZER A LINHA AINDA
-        bloco = bloco->prox;
     }
 }
 

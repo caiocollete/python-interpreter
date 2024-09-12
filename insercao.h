@@ -53,6 +53,8 @@ void inicializar(No **lista) {
 	(*lista)->tk = NULL;		
 }
 
+void inserir_no_lista_vertical(char * str, No * no);
+
 void inserir_a_partir_de_arquivo(No *lista, char nome_arquivo[]) {
 	FILE *fp;
 	char str[MAX_LINHA];
@@ -87,7 +89,7 @@ void separar_string(char string_original[], char nova_string[], char token_retor
 	token_retornado[cont] = '\0';
 	
 	// Gera a string resultante (nova_string = string original - token_retornado)
-	// Se a string_original parou com um espaço, esse espaço é eliminado na nova_string
+	// Se a string_original parou com um espaï¿½o, esse espaï¿½o ï¿½ eliminado na nova_string
 	int i = 0;
 	if(string_original[cont] == ' ')
 		cont++;
@@ -119,7 +121,7 @@ void inserir_no_lista_vertical(char linha[], No *lista) {
 	int cont;
 	
 	if(lista->tk != NULL) {
-		// Se entrar aqui, significa que a lista vertical não está vazia
+		// Se entrar aqui, significa que a lista vertical nï¿½o estï¿½ vazia
 		while(lista->prox != NULL) 
 			lista = lista->prox;	
 		lista->prox = nova_caixa;
