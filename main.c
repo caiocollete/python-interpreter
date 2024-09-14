@@ -59,7 +59,7 @@ int realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_a
     strcpy(comparador_maior_igual, ">=");
     strcpy(comparador_menor_igual, "<=");
 
-    // Faz as compara??es caso ambos sejam inteiros
+    // Faz as comparacoes caso ambos sejam inteiros
     if (tipo_operando1 == INT && tipo_operando2 == INT) {
         if (strcmp(comparador, comparador_igualdade) == 0)
             return (valor_operando1.INT == valor_operando2.INT);

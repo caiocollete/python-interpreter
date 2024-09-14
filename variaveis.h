@@ -27,6 +27,8 @@ typedef struct Funcao {
     No *starts;
 } Funcao;
 
+void inserir_variavel(Variavel **listaVar, char nome[], char valor[]);
+void inserir_funcao(Funcao **listaFunc, char nome[], Variavel *parametros, No *linhaStart);
 
 void processar_tokens(No *lista, Variavel **listaVar, Funcao **listaFunc) {
     No *atual = lista;

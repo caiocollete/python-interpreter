@@ -31,6 +31,8 @@ typedef struct No{
 	Token *tk;
 } No;
 
+void inserir_token_lista_horizontal(Token **token, char token_a_inserir[]);
+
 char ehDelimitador(char c) {
     return c == PARENTESEAB || c == PARENTESEFECHA ||
            c == VIRGULA || c == CHAVEAB || c == CHAVEFECHA ||
@@ -113,7 +115,8 @@ void separar_string(char string_original[], char nova_string[], char token_retor
 void inserir_no_lista_vertical(char linha[], No *lista) {
 	
 	No *nova_caixa = (No*) malloc(sizeof(No));
-	nova_caixa->ant = nova_caixa->prox = nova_caixa->tk = NULL;
+	nova_caixa->ant = nova_caixa->prox = NULL;
+	nova_caixa->tk = NULL;
 	
 	char token_retornado[MAX_TOKEN], delimitador[2];
 	char nova_string[100];
