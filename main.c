@@ -12,11 +12,11 @@ void gerar_todas_as_linhas_print(No *lista, Variavel *listaVar);
 
 Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]) {
 	Variavel aux;
-	// J? ? atribu?do o nome de undefined para o caso de n?o encontrar a vari?vel na lista de vari?veis
+	// Ja atribuido o nome de undefined para o caso de nao encontrar a variavel na lista de variaveis
 	strcpy(aux.nome, "undefined");
-	// Verifica se a vari?vel a ser procurada est? na lista
+	// Verifica se a variavel a ser procurada esta na lista
 	while(listaVar != NULL) {
-		// Se encontrar a vari?vel, vai copiar para aux
+		// Se encontrar a variavel, vai copiar para aux
 		if(strcmp(nome_variavel_a_ser_procurada, listaVar->nome) == 0) {
 			// Copia o nome
 			strcpy(aux.nome, listaVar->nome);
@@ -40,9 +40,9 @@ Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_pr
 }
 Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, int posicao) {
 	// Vai chegar no segundo "
-	char nome_variavel_encontrada[10]; // ? o nome da vari?vel que est? ap?s o %
-	char literal_string[40]; // Essa vari?vel ser? necess?ria quando, por exemplo, printf("%s", "7")
-	Variavel var; // ? a vari?vel que ser? retornada
+	char nome_variavel_encontrada[10]; // ? o nome da variavel que esta apas o %
+	char literal_string[40]; // Essa variavel sera necessaria quando, por exemplo, printf("%s", "7")
+	Variavel var; // a a variavel que ser? retornada
 	int encontrou_a_variavel = 0;
 	while(linha != NULL && strcmp(linha->token, "\"") != 0)
 		linha = linha->prox;
@@ -55,12 +55,12 @@ Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, i
 		if(linha != NULL)
 			linha = linha->prox; // Estamos pulando o (
 
-		// Agora precisa andar at? o argumento que est? em int posi??o
+		// Agora precisa andar ata o argumento que esta em int posicao
 		int i = 0;
 		while(i < posicao) {
 			linha = linha->prox;
 			if(strcmp(linha->token, ",") != 0 && strcmp(linha->token, "\0") != 0 && strcmp(linha->token, " ") != 0 && strcmp(linha->token, ")")) {
-				// Esse if ? necess?rio para n?o contabilizar as  v?rgulas, \0 , espa?os em branco e )
+				// Esse if e necess?rio para nao contabilizar as  virgulas, \0 , espacos em branco e )
 				i++;
 			}
 
@@ -94,26 +94,26 @@ Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, i
 
 char* gerar_linha_print2(Token *linha, Variavel *listaVar) {
 
-	char print_gerado[MAX_LINHA]; // ? a string que ser? retornada
-	strcpy(print_gerado, ""); // Retornar? uma string vazia caso aux == NULL ou n?o seja um print
+	char print_gerado[MAX_LINHA]; // ? a string que sera retornada
+	strcpy(print_gerado, ""); // Retornara uma string vazia caso aux == NULL ou nao seja um print
 	Token *aux = linha;
-	Token *aux2; // ? a vari?vel que ir? procurar os argumentos ap?s o % em print("..." % (...))
-	int contador_posicao = 0; // Ir? contar quantos %d %s %f tem, para saber qual deve ser procurado ap?s o %
+	Token *aux2; // e a variavel que ira procurar os argumentos apas o % em print("..." % (...))
+	int contador_posicao = 0; // Ira contar quantos %d %s %f tem, para saber qual deve ser procurado ap?s o %
 
-	// Esse primeiro if ir? verificar se a vari?vel que guarda os tokens n?o ? NULL e se realmente ? uma linha que tem print
+	// Esse primeiro if ira verificar se a variavel que guarda os tokens nao e NULL e se realmente e uma linha que tem print
 	if(aux != NULL && strcmp(aux->token, "print") == 0) {
 		// Todos os prints tem essa estrutura print("..." % )
-		// Caso entre aqui, a condi??o de parada ser? chegar no segundo "
-		// Para isso, precisa-se pular o ( e " primeiro, porque sen?o ir? parar nesse primeiro "
+		// Caso entre aqui, a condicao de parada sera chegar no segundo "
+		// Para isso, precisa-se pular o ( e " primeiro, porque senao ira parar nesse primeiro "
 		while(strcmp(aux->token, "\"") != 0)
 			aux = aux->prox;
 		aux = aux->prox; // O token que estava armazenado ao sair do while era o ", ent?o j? pulamos um pra frente
 
-		// A condi??o de parada desse while ser? o pr?ximo " , pois o que vier depois dele s? ? necess?rio
+		// A condicao de parada desse while sera o proximo " , pois o que vier depois dele so e necess?rio
 		// para descobrir quais os valores dos %d %s %f caso tenham
 		while(strcmp(aux->token, "\"") != 0) {
 
-			// Aqui ? onde ser? tratado caso encontre %d %s %f
+			// Aqui e onde sera tratado caso encontre %d %s %f
 			if(strcmp(aux->token, "%d") == 0 || strcmp(aux->token, "%s") == 0 || strcmp(aux->token, "%f") == 0 ) {
 				aux2 = aux;
 				Variavel var_encontrada = encontrar_a_variavel_apos_o_percent(aux, listaVar, contador_posicao);
@@ -139,7 +139,7 @@ char* gerar_linha_print2(Token *linha, Variavel *listaVar) {
 				contador_posicao++;
 
 			} else {
-				// Aqui ? onde concatena na string a ser gerada caso n?o seja %d %s e %f
+				// Aqui e onde concatena na string a ser gerada caso nao seja %d %s e %f
 				strcat(print_gerado, aux->token);
 				strcat(print_gerado, " ");
 			}
@@ -269,15 +269,15 @@ int realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_a
             return (strcmp(valor_operando1.STR, valor_operando2.STR) <= 0);
     }
 
-    return -1;  // Esse valor ? retornado caso n?o seja poss?vel concluir se uma express?o ? verdadeira ou falsa
+    return -1;  // Esse valor e retornado caso nao seja possivel concluir se uma expressao e verdadeira ou falsa
 }
 
 
 
 char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
-	// Essa fun??o ? respons?vel por separar os operadores de uma compara??o, por exemplo: 1 == 4
-	// Ela ir? separar os tokens [1, ==, 4] e, ap?s separ?-los, ir? jog?-los em uma fun??o que retorna o valor dessa compara??o
-	// E a? a fun??o atual ir? retornar o valor
+	// Essa funcao e responsavel por separar os operadores de uma comparacao, por exemplo: 1 == 4
+	// Ela ira separar os tokens [1, ==, 4] e, ap?s separa-los, ira joga-los em uma funcao que retorna o valor dessa comparacao
+	// E a? a funcao atual ir? retornar o valor
 
 	Tipos valor_do_operando1;
 	Tipos valor_do_operando2;
