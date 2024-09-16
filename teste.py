@@ -1,9 +1,5 @@
-a = 8.0
-b = 1000
-
-if "OI" == "oi":
-if "teste" < "a":
-if a >= b:
-
-
+print("teste ")
+if 1 > 2:
+    print("casa")
+    print("teste 2")
 

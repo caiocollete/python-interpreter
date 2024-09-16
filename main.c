@@ -9,6 +9,197 @@
 #include "whileFunc.h"
 
 void gerar_todas_as_linhas_print(No *lista, Variavel *listaVar);
+Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]);
+Variavel encontrar_a_variavel_apos_o_percent(Token *linha, Variavel *listaVar, int posicao);
+char* gerar_linha_print2(Token *linha, Variavel *listaVar);
+int isInteger(const char *str);
+int isFloat(const char *str);
+int realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_atual tipo_operando2, Tipos valor_operando2, char comparador[]);
+char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar);
+void testar_if();
+char menu();
+
+
+void executar_codigo_teste() {
+	No *lista;
+	Variavel *listaVar = NULL;
+	Funcao *listaFunc = NULL;
+	char esc;
+
+	inicializar(&lista);
+	inserir_a_partir_de_arquivo(lista, "teste.py");
+	
+	//Processar a lista para identificar variaveis e funcoes
+	processar_tokens(lista, &listaVar, &listaFunc);
+	
+	exibir_lista(lista);
+	
+	No *linha_atual = lista;
+	while(linha_atual != NULL) {
+		executar_linha_teste(&linha_atual, listaVar);
+		
+	}
+	
+	
+}
+
+void executar_linha_teste(No **linha_atual, Variavel *listaVar) {
+	
+	int eh_primeira_verificacao = 1; // Essa variável é para saber se entrou na função agora e, portanto, fazer apenas uma verificação.
+	// Por exemplo: print("a") 
+	// Só vai verificar uma vez qual o "comando" da linha, nesse caso é print, mas poderia ser if, while etc.
+	
+	Token *token_atual = (*linha_atual)->tk;
+	
+	while(token_atual != NULL) {
+		
+		// Aqui verifica qual o comando da linha
+		if(eh_primeira_verificacao) {
+			if(strcmp(token_atual->token, "print") == 0) {
+				
+				printf("\n%s", gerar_linha_print2(token_atual, listaVar));
+				eh_primeira_verificacao = 0;
+			} else if (strcmp(token_atual->token, "if") == 0) {
+				int resultado_comparacao = retornar_valor_de_apenas_uma_comparacao(token_atual, listaVar);
+				*linha_atual = (*linha_atual)->prox;
+				if(resultado_comparacao == 1) {
+					Token *token_aux = (*linha_atual)->tk;
+					while(token_aux != NULL && strcmp(token_aux->token, "\t") == 0 || strcmp(token_aux->token, " ") == 0 || strcmp(token_aux->token, "\0") == 0) {
+							token_aux = token_aux->prox;
+							
+						}
+					No *linha_aux = (No*) malloc(sizeof(No));
+					linha_aux->prox = NULL;
+					linha_aux->tk = token_aux;
+					executar_linha_teste(&linha_aux, listaVar);
+					
+				} else {
+					while(*linha_atual != NULL && strcmp((*linha_atual)->tk->token, "\t") == 0 || 
+					strcmp((*linha_atual)->tk->token, " ") == 0 || strcmp((*linha_atual)->tk->token, "\0") == 0)
+					{
+						*linha_atual = (*linha_atual)->prox;
+					}
+					
+					
+				}
+				
+				
+			}
+		}
+		
+		
+		//printf("%s", token_atual->token);
+		//puts(print_a_exibir);
+		token_atual = token_atual->prox;
+		
+	}
+	
+	
+	*linha_atual = (*linha_atual)->prox;
+	
+}
+
+int main() {
+	executar_codigo_teste();
+	/*
+	No *lista;
+	Variavel *listaVar = NULL;
+	Funcao *listaFunc = NULL;
+	char esc;
+
+	inicializar(&lista);
+	inserir_a_partir_de_arquivo(lista, "teste.py");
+	
+	//Processar a lista para identificar variaveis e funcoes
+	processar_tokens(lista, &listaVar, &listaFunc);
+	
+	do{
+		switch(menu()){
+			case 'b': 	exibir_variaveis(listaVar);
+						printf("\n");
+						exibir_funcoes(listaFunc);
+						system("pause");  
+						break;
+						
+			case 'a': 	executar_bloco(lista,listaVar,listaFunc);
+						system("pause");
+						break;
+						
+			case 'c': 	exibir_lista(lista);
+						system("pause");  
+						
+		}
+		scanf("%c",&esc);
+		esc=tolower(esc);
+	}while(esc!='s');
+	
+	
+*/
+}
+
+char menu() {
+	char esc;
+
+	system("cls");
+
+	printf("\n==== MENU ====\n");
+	printf("[A] - Executar Codigo\n");
+	printf("[B] - Exibir RAM\n");
+	printf("[C] - Exibe Lista\n\n");
+
+
+	printf("-> "); scanf("%c",&esc);
+
+	system("cls");
+	return tolower(esc);
+}
+
+
+// Função apenas para testar o if, será apgada depois
+
+void testar_if() {
+		No *lista;
+	Variavel *listaVar = NULL;
+	Funcao *listaFunc = NULL;
+	char esc;
+
+	inicializar(&lista);
+	inserir_a_partir_de_arquivo(lista, "teste.py");
+	
+	//Processar a lista para identificar variaveis e funcoes
+	processar_tokens(lista, &listaVar, &listaFunc);
+	/* MENU APAGADO POR ENQUANTO  
+	do{
+		switch(menu()){
+			case 'b': 	exibir_variaveis(listaVar);
+						printf("\n");
+						exibir_funcoes(listaFunc);
+						system("pause");  
+						break;
+						
+			case 'a': 	executar_bloco(lista,listaVar,listaFunc);
+						system("pause");
+						break;
+						
+			case 'c': 	exibir_lista(lista);
+						system("pause");  
+						
+		}
+		scanf("%c",&esc);
+		esc=tolower(esc);
+	}while(esc!='s');
+	
+	*/
+	exibir_lista(lista);
+	exibir_variaveis(listaVar);
+	//gerar_todas_as_linhas_print(lista, listaVar);
+
+	while(lista != NULL) {
+		printf("\n%c", retornar_valor_de_apenas_uma_comparacao(lista->tk, listaVar));
+		lista = lista->prox;
+	}
+	
+}
 
 Variavel procurar_variavel_print(Variavel *listaVar, char nome_variavel_a_ser_procurada[]) {
 	Variavel aux;
@@ -148,24 +339,6 @@ char* gerar_linha_print2(Token *linha, Variavel *listaVar) {
 		}
 	}
 	return print_gerado;
-}
-
-
-char menu() {
-	char esc;
-
-	system("cls");
-
-	printf("\n==== MENU ====\n");
-	printf("[A] - Executar Codigo\n");
-	printf("[B] - Exibir RAM\n");
-	printf("[C] - Exibe Lista\n\n");
-
-
-	printf("-> "); scanf("%c",&esc);
-
-	system("cls");
-	return tolower(esc);
 }
 
 int isInteger(const char *str) {
@@ -317,7 +490,7 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 				linha = linha->prox;
 			}
 			strcpy(valor_do_operando1.STR, string_a_armazenar);
-			printf("Operando1 = %s", valor_do_operando1.STR);
+			//printf("Operando1 = %s", valor_do_operando1.STR);
 			linha = linha->prox;
 		} else {
 			// Se n?o for string, s? pode ser um n?mero ou uma vari?vel
@@ -325,23 +498,23 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 			if(isInteger(linha->token)) {
 				tipo_do_operando1 = INT;
 				valor_do_operando1.INT = atoi(linha->token);
-				printf("\nOperando1 = %d", valor_do_operando1.INT);
+				//printf("\nOperando1 = %d", valor_do_operando1.INT);
 			} else if(isFloat(linha->token)){
 				tipo_do_operando1 = FLOAT;
 				valor_do_operando1.FLOAT = atof(linha->token);
-				printf("\nOperando1 = %f", valor_do_operando1.FLOAT);
+				//printf("\nOperando1 = %f", valor_do_operando1.FLOAT);
 			} else {
 				Variavel var = procurar_variavel_print(listaVar, linha->token);
 				tipo_do_operando1 = var.tipoAtual;
 				if(tipo_do_operando1 == FLOAT) {
 					valor_do_operando1.FLOAT = var.valor.FLOAT;
-					printf("\nOperando1 = %f", valor_do_operando1.FLOAT);
+					//printf("\nOperando1 = %f", valor_do_operando1.FLOAT);
 				} else if (tipo_do_operando1 == INT) {
 					valor_do_operando1.INT = var.valor.INT;
-					printf("\nOperando1 = %d", valor_do_operando1.INT);
+					//printf("\nOperando1 = %d", valor_do_operando1.INT);
 				} else {
 					strcpy(valor_do_operando1.STR, var.valor.STR);
-					printf("\nOperando1 = %s", valor_do_operando1.STR);
+					//printf("\nOperando1 = %s", valor_do_operando1.STR);
 				}
 				
 			}
@@ -381,7 +554,7 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 			
 		}
 
-		printf("\nComparador %s", comparador_utilizado);
+		//printf("\nComparador %s", comparador_utilizado);
 
 		// Esse pr?ximo bloco de c?digo ? respons?vel por pegar o segundo operando
 		linha = linha->prox;
@@ -405,120 +578,37 @@ char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar) {
 				linha = linha->prox;
 			}
 			strcpy(valor_do_operando2.STR, string_a_armazenar);
-			printf("\nOperando2 = %s", valor_do_operando2.STR);
+			//printf("\nOperando2 = %s", valor_do_operando2.STR);
 		} else {
 			// Se n?o for string, s? pode ser um n?mero e a? ? necess?rio descobrir se ? inteiro ou float
 			// Se for para o else, ent?o ? float, porque n?o ? inteiro e nem string
 			if(isInteger(linha->token)) {
 				tipo_do_operando2 = INT;
 				valor_do_operando2.INT = atoi(linha->token);
-				printf("\nOperando2 = %d", valor_do_operando2.INT);
+				//printf("\nOperando2 = %d", valor_do_operando2.INT);
 			} else if(isFloat(linha->token)) {
 				tipo_do_operando2 = FLOAT;
 				valor_do_operando2.FLOAT = atof(linha->token);
-				printf("\nOperando2 = %f", valor_do_operando2.FLOAT);
+				//printf("\nOperando2 = %f", valor_do_operando2.FLOAT);
 			} else {
 				Variavel var = procurar_variavel_print(listaVar, linha->token);
 				tipo_do_operando2 = var.tipoAtual;
 				if(tipo_do_operando2 == FLOAT) {
 					valor_do_operando2.FLOAT = var.valor.FLOAT;
-					printf("\nOperando2 = %f", valor_do_operando2.FLOAT);
+					//printf("\nOperando2 = %f", valor_do_operando2.FLOAT);
 				} else if (tipo_do_operando2 == INT) {
 					valor_do_operando2.INT = var.valor.INT;
-					printf("\nOperando2 = %d", valor_do_operando2.INT);
+					//printf("\nOperando2 = %d", valor_do_operando2.INT);
 				} else {
-					printf("\nEntrou3");
+					//printf("\nEntrou3");
 					strcpy(valor_do_operando2.STR, var.valor.STR);
-					printf("\nOperando2 = %s", valor_do_operando2.STR);
+					//printf("\nOperando2 = %s", valor_do_operando2.STR);
 				}
 				
 			}
 		}
-		printf("\n Resultado da operacao: %d", realizar_comparacao(tipo_do_operando1, valor_do_operando1, tipo_do_operando2, valor_do_operando2, comparador_utilizado));
+		//printf("\n Resultado da operacao: %d", realizar_comparacao(tipo_do_operando1, valor_do_operando1, tipo_do_operando2, valor_do_operando2, comparador_utilizado));
 	}
 	return realizar_comparacao(tipo_do_operando1, valor_do_operando1, tipo_do_operando2, valor_do_operando2, comparador_utilizado);
 }
 
-void testar_if();
-
-int main() {
-	No *lista;
-	Variavel *listaVar = NULL;
-	Funcao *listaFunc = NULL;
-	char esc;
-
-	inicializar(&lista);
-	inserir_a_partir_de_arquivo(lista, "teste.py");
-	
-	//Processar a lista para identificar variaveis e funcoes
-	processar_tokens(lista, &listaVar, &listaFunc);
-
-	do{
-		switch(menu()){
-			case 'b': 	exibir_variaveis(listaVar);
-						printf("\n");
-						exibir_funcoes(listaFunc);
-						system("pause");  
-						break;
-						
-			case 'a': 	executar_bloco(lista,listaVar,listaFunc);
-						system("pause");
-						break;
-						
-			case 'c': 	exibir_lista(lista);
-						system("pause");  
-						
-		}
-		scanf("%c",&esc);
-		esc=tolower(esc);
-	}while(esc!='s');
-	
-	
-}
-
-
-// Função apenas para testar o if, será apgada depois
-
-void testar_if() {
-		No *lista;
-	Variavel *listaVar = NULL;
-	Funcao *listaFunc = NULL;
-	char esc;
-
-	inicializar(&lista);
-	inserir_a_partir_de_arquivo(lista, "teste.py");
-	
-	//Processar a lista para identificar variaveis e funcoes
-	processar_tokens(lista, &listaVar, &listaFunc);
-	/* MENU APAGADO POR ENQUANTO  
-	do{
-		switch(menu()){
-			case 'b': 	exibir_variaveis(listaVar);
-						printf("\n");
-						exibir_funcoes(listaFunc);
-						system("pause");  
-						break;
-						
-			case 'a': 	executar_bloco(lista,listaVar,listaFunc);
-						system("pause");
-						break;
-						
-			case 'c': 	exibir_lista(lista);
-						system("pause");  
-						
-		}
-		scanf("%c",&esc);
-		esc=tolower(esc);
-	}while(esc!='s');
-	
-	*/
-	exibir_lista(lista);
-	exibir_variaveis(listaVar);
-	//gerar_todas_as_linhas_print(lista, listaVar);
-
-	while(lista != NULL) {
-		printf("\n%c", retornar_valor_de_apenas_uma_comparacao(lista->tk, listaVar));
-		lista = lista->prox;
-	}
-	
-}
