@@ -1,5 +1,3 @@
-while(a<b):
-	a=a+b
 a = 5
 b = 10
 c = 0

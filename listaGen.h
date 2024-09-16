@@ -82,28 +82,18 @@ Token* ProximoTokenValido(Token* token) {
 }
 
 // Parsing básico: Identifica o próximo token da lista encadeada e cria a lista generalizada
-ListaGen* ParseListaEncadeada(Token* token, Variavel *listaVar) {
+ListaGen* ParseListaEncadeada(Token* token) {
     ListaGen *L = NULL;
     token = ProximoTokenValido(token);
 
     while (token != NULL) {
         char* t = token->token;
 
-        // Se for numero, cria um atomo numerico
+        // Se for número, cria um átomo numérico
         if (isdigit(t[0]) || t[0] == '.') {
             float valor = atof(t);
             token = token->prox;
             return CriaValor(valor);
-        }
-        else{
-        	Variavel *var = procurar_variavel(listaVar, token->token);
-        	token=token->prox;
-			if(var!=NULL){
-				if(var->tipoAtual==INT)
-        			return CriaValor(var->valor.INT);
-        		if(var->tipoAtual==FLOAT)
-        			return CriaValor(var->valor.FLOAT);
-        	}
         }
 
         // Se for operador, cria um átomo de operador
@@ -122,7 +112,7 @@ ListaGen* ParseListaEncadeada(Token* token, Variavel *listaVar) {
             // Espera-se um parêntese depois da função
             if (strcmp(token->token, "(") == 0) {
                 token = token->prox; // Avança após o '('
-                ListaGen *subexpressao = ParseListaEncadeada(token,listaVar);
+                ListaGen *subexpressao = ParseListaEncadeada(token);
                 token = token->prox; // Consome o ')'
                 return CriaValor(ExecutaFuncao(funcao, subexpressao->no.valor));
             }
@@ -131,7 +121,7 @@ ListaGen* ParseListaEncadeada(Token* token, Variavel *listaVar) {
         // Se for parêntese abrindo, cria sublista
         if (strcmp(t, "(") == 0) {
             token = token->prox;
-            ListaGen *subexpressao = ParseListaEncadeada(token, listaVar);
+            ListaGen *subexpressao = ParseListaEncadeada(token);
             token = token->prox; // Consome o ')'
             return subexpressao;
         }
