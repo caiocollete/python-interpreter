@@ -30,6 +30,17 @@ typedef struct Funcao {
 void inserir_variavel(Variavel **listaVar, char nome[], char valor[]);
 void inserir_funcao(Funcao **listaFunc, char nome[], Variavel *parametros, No *linhaStart);
 
+Variavel *procurar_variavel(Variavel *listaVar, char nomeVar[]){
+	while(strcmp(listaVar->nome,nomeVar)!=0 && listaVar!=NULL){
+		listaVar=listaVar->prox;
+	}
+	if(strcmp(listaVar->nome,nomeVar)!=0){
+		return listaVar;
+	}
+	else return NULL;
+	
+}
+
 void processar_tokens(No *lista, Variavel **listaVar, Funcao **listaFunc) {
     No *atual = lista;
     Variavel *parm = NULL, *aux = NULL;

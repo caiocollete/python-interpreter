@@ -13,8 +13,31 @@ void executar_linha(Token *linha, Variavel *listaVar, No *bloco){
  		}
  		if(strcmp(linha->token,"for")==0){
  		}	
- 		if(!ehDelimitador(linha->token)){} // eh palavra
-		// continuar
+ 		else if (!ehDelimitador(linha->token)) {
+            // Verificar se o token é uma variável
+            Variavel *var = procurar_variavel(listaVar, linha->token);
+            
+            // Se for uma variável existente
+            if (strcmp(var->nome, "undefined") != 0) {
+                linha = linha->prox; // mover para o próximo token (que pode ser um operador de atribuição)
+
+                // Se for uma atribuição (ex: "=")
+                if (linha != NULL && strcmp(linha->token, "=") == 0) {
+                    linha = linha->prox; // mover para o próximo token que é o valor a ser atribuído
+
+                    // Agora, é necessário avaliar o valor e atribuir à variável
+                    if (linha != NULL) {
+                    	/*
+							TEREI QUE BOLAR UM JEITO DE FAZER A ATRIBUICAO POIS PODE SER UMA OPERACAO MATEMATICA, NAO SO ATRIBUICAO, NO CASO
+							TEM QUE FUNCIONAR PARA OS DOIS PROBLEMAS TANTO ATRIBUICAO QUANDO OPERACAO, OU SEJA, TEREMOS QUE PARTIR PARA A LISTAGEN AQUI
+						*/
+                    }
+                }
+            } 
+			else {
+                // Caso contrário, pode ser um comando ou uma função desconhecida
+                printf("Comando ou variável '%s' não reconhecido(a).\n", linha->token);
+            }
  	}
  }
 

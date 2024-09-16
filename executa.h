@@ -1,3 +1,3 @@
-void executaCodigo(No *lista, Variavel *listaVar,Funcao *listaFunc){
+/*void executaCodigo(No *lista, Variavel *listaVar,Funcao *listaFunc){
 	
-}
+}*/

@@ -330,7 +330,7 @@ int main() {
 	// TESTE
 	
 	//exibir_lista(lista);
-	gerar_todas_as_linhas_print(lista, listaVar);
+	//gerar_todas_as_linhas_print(lista, listaVar);
 
 	/*while(lista != NULL) {
 		printf("\n%c", retornar_valor_de_apenas_uma_comparacao(lista->tk, listaVar));
@@ -340,7 +340,7 @@ int main() {
 	
 
     
-	//exibir_lista(lista);
+	exibir_lista(lista);
 	//exibir_variaveis(listaVar);
     //exibir_funcoes(listaFunc);
 }
