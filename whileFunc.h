@@ -1,9 +1,10 @@
-void executar_while(Token *linha, Variavel *listaVar, No *L);
+#include "listaGen.h"
+void executar_while(Token *linha, Variavel *listaVar, No *L, Funcao *listaFunc);
 
-void executar_linha(Token *linha, Variavel *listaVar, No *bloco){
+void executar_linha(Token *linha, Variavel *listaVar, No *bloco, Funcao *listaFunc){
  	while(linha!=NULL){
  		if(strcmp(linha->token,"while")==0){
- 			executar_while(linha,listaVar,bloco);
+ 			executar_while(linha,listaVar,bloco,listaFunc);
  		}
  		if(strcmp(linha->token,"if")==0){
  		}
@@ -13,7 +14,7 @@ void executar_linha(Token *linha, Variavel *listaVar, No *bloco){
  		}
  		if(strcmp(linha->token,"for")==0){
  		}	
- 		else if (!ehDelimitador(linha->token)) {
+ 		else if (!ehDelimitador(linha->token[0])) {
             // Verificar se o token é uma variável
             Variavel *var = procurar_variavel(listaVar, linha->token);
             
@@ -27,10 +28,10 @@ void executar_linha(Token *linha, Variavel *listaVar, No *bloco){
 
                     // Agora, é necessário avaliar o valor e atribuir à variável
                     if (linha != NULL) {
-                    	/*
-							TEREI QUE BOLAR UM JEITO DE FAZER A ATRIBUICAO POIS PODE SER UMA OPERACAO MATEMATICA, NAO SO ATRIBUICAO, NO CASO
-							TEM QUE FUNCIONAR PARA OS DOIS PROBLEMAS TANTO ATRIBUICAO QUANDO OPERACAO, OU SEJA, TEREMOS QUE PARTIR PARA A LISTAGEN AQUI
-						*/
+                    		// Parse linha to ListaGen
+                    	    ListaGen *listaGen = ParseListaEncadeada(linha);
+                    	    // RESOLVE A EXPRESSAO DA LISTA GEN
+                    	    var->valor.FLOAT = ResolveLista(listaGen);
                     }
                 }
             } 
@@ -38,19 +39,20 @@ void executar_linha(Token *linha, Variavel *listaVar, No *bloco){
                 // Caso contrário, pode ser um comando ou uma função desconhecida
                 printf("Comando ou variável '%s' não reconhecido(a).\n", linha->token);
             }
+ 		}
  	}
- }
+}
 
 // funcao que executa o bloco de codigo dentro do while
-void executar_bloco(No *bloco, Variavel *listaVar) {
+void executar_bloco(No *bloco, Variavel *listaVar, Funcao *listaFunc) {
     // Percorre cada linha do bloco e executa a funcao correspondente
     while (bloco != NULL) {
-        executar_linha(bloco->tk, listaVar, bloco); // TEMOS QUE FAZER A LINHA AINDA
+        executar_linha(bloco->tk, listaVar, bloco, listaFunc); // TEMOS QUE FAZER A LINHA AINDA
         bloco = bloco->prox;
     }
 }
 
-void executar_while(Token *linha, Variavel *listaVar, No *L) {
+void executar_while(Token *linha, Variavel *listaVar, No *L, Funcao *listaFunc) {
     No *blocoDeExec,*auxBlocoExec;
 	Token *auxLinha;
 	Variavel *varsWhile,*auxVar;
@@ -169,7 +171,7 @@ void executar_while(Token *linha, Variavel *listaVar, No *L) {
     
     while (realizar_comparacao(varsWhile->tipoAtual, varsWhile->valor, varsWhile->prox->tipoAtual, varsWhile->prox->valor, comparador)) {
         // Enquanto a condicao for verdadeira, executamos o bloco de codigo
-        executar_bloco(blocoDeExec, varsWhile);
+        executar_bloco(blocoDeExec, varsWhile, listaFunc);
     }
 }
 
