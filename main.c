@@ -17,6 +17,69 @@ int realizar_comparacao(tipo_atual tipo_operando1, Tipos valor_operando1, tipo_a
 char retornar_valor_de_apenas_uma_comparacao(Token *linha, Variavel *listaVar);
 void testar_if();
 char menu();
+void executar_codigo_teste();
+void executar_linha_teste(No **linha_atual, Variavel **listaVar);
+
+Variavel *procurar_variavel_teste(Variavel *listaVar, char nomeVar[]);
+
+
+int main() {
+
+    No *lista;
+    Variavel *listaVar = NULL;
+    Funcao *listaFunc = NULL;
+    char esc;
+
+    inicializar(&lista);
+    inserir_a_partir_de_arquivo(lista, "teste.py");
+
+    //Processar a lista para identificar variaveis e funcoes
+    processar_tokens(lista, &listaVar, &listaFunc);
+
+    do{
+            switch(menu()){
+            		case 'a': 	executar_codigo_teste();
+            								printf("\n");
+                                            system("pause");
+                                            break;
+                    case 'b': 	exibir_variaveis(listaVar);
+                                            printf("\n");
+                                            exibir_funcoes(listaFunc);
+                                            system("pause");
+                                            break;
+                                            
+                    case 'c': 	exibir_lista(lista);
+                    						printf("\n");
+                                            system("pause");
+                                            break;
+
+            }
+            scanf("%c",&esc);
+            esc=tolower(esc);
+            
+    }while(esc!='s');
+
+
+
+}
+
+char menu() {
+    char esc;
+
+    system("cls");
+
+    printf("\n==== MENU ====\n");
+    printf("[A] - Executar Codigo\n");
+    printf("[B] - Exibir RAM\n");
+    printf("[C] - Exibe Lista\n\n");
+
+    printf("-> ");
+    scanf("%c", &esc);
+
+    system("cls");
+    return tolower(esc);
+}
+
 
 void executar_codigo_teste() {
     No *lista;
@@ -30,18 +93,18 @@ void executar_codigo_teste() {
     // Processar a lista para identificar variaveis e funcoes
     processar_tokens(lista, &listaVar, &listaFunc);
 
-    exibir_lista(lista);
+    //exibir_lista(lista);
+    
 
     No *linha_atual = lista;
     while (linha_atual != NULL) {
-        executar_linha_teste(&linha_atual, listaVar);
+        executar_linha_teste(&linha_atual, &listaVar);
     }
 }
 
-void executar_linha_teste(No **linha_atual, Variavel *listaVar) {
-    int eh_primeira_verificacao =
-        1;  // Essa variável é para saber se entrou na função agora e, portanto,
-            // fazer apenas uma verificação.
+void executar_linha_teste(No **linha_atual, Variavel **listaVar) {
+    int eh_primeira_verificacao = 1;  // Essa variável é para saber se entrou na função agora e, portanto,
+    // fazer apenas uma verificação.
     // Por exemplo: print("a")
     // Só vai verificar uma vez qual o "comando" da linha, nesse caso é print,
     // mas poderia ser if, while etc.
@@ -107,9 +170,7 @@ void executar_linha_teste(No **linha_atual, Variavel *listaVar) {
                         }
                     }
                 }
-            }
-
-        } else if (strcmp(token_atual->token, "else") == 0) {
+            } else if (strcmp(token_atual->token, "else") == 0) {
             *linha_atual = (*linha_atual)->prox;
 
             // Esse bloco vai executar os comandos que estiverem dentro do print
@@ -129,7 +190,8 @@ void executar_linha_teste(No **linha_atual, Variavel *listaVar) {
             linha_aux->prox = NULL;
             linha_aux->tk = token_aux;
             executar_linha_teste(&linha_aux, listaVar);
-        }
+        } 
+        } 
 
         
         token_atual = token_atual->prox;
@@ -138,60 +200,74 @@ void executar_linha_teste(No **linha_atual, Variavel *listaVar) {
     *linha_atual = (*linha_atual)->prox;
 }
 
-int main() {
-    executar_codigo_teste();
-    /*
-    No *lista;
-    Variavel *listaVar = NULL;
-    Funcao *listaFunc = NULL;
-    char esc;
+Variavel *procurar_variavel_teste(Variavel *listaVar, char nomeVar[]){
+	while(listaVar!=NULL && strcmp(listaVar->nome,nomeVar)!=0){
+		listaVar=listaVar->prox;
+	}
 
-    inicializar(&lista);
-    inserir_a_partir_de_arquivo(lista, "teste.py");
-
-    //Processar a lista para identificar variaveis e funcoes
-    processar_tokens(lista, &listaVar, &listaFunc);
-
-    do{
-            switch(menu()){
-                    case 'b': 	exibir_variaveis(listaVar);
-                                            printf("\n");
-                                            exibir_funcoes(listaFunc);
-                                            system("pause");
-                                            break;
-
-                    case 'a': 	executar_bloco(lista,listaVar,listaFunc);
-                                            system("pause");
-                                            break;
-
-                    case 'c': 	exibir_lista(lista);
-                                            system("pause");
-
-            }
-            scanf("%c",&esc);
-            esc=tolower(esc);
-    }while(esc!='s');
-
-
-*/
+	
+	return listaVar;
+	
 }
 
-char menu() {
-    char esc;
-
-    system("cls");
-
-    printf("\n==== MENU ====\n");
-    printf("[A] - Executar Codigo\n");
-    printf("[B] - Exibir RAM\n");
-    printf("[C] - Exibe Lista\n\n");
-
-    printf("-> ");
-    scanf("%c", &esc);
-
-    system("cls");
-    return tolower(esc);
+int eh_nome_de_variavel(char nome_variavel[]) {
+	char c_maiusculo = 'A';
+	char c_minusculo = 'a';
+	char *verificar;
+	int eh_letra = 0;
+	while(c_maiusculo <= 'Z' || c_minusculo <= 'z') {
+		if(nome_variavel[0] == c_maiusculo || nome_variavel[0] == c_minusculo)
+			eh_letra = 1;
+		c_maiusculo++;
+		c_minusculo++;
+	}
+	
+	if(eh_letra) {
+		verificar = strstr(nome_variavel, "=");
+		if (verificar != NULL) return 0;
+		
+		verificar = strstr(nome_variavel, "<");
+		if (verificar != NULL) return 0;
+		
+		verificar = strstr(nome_variavel, ">");
+		if (verificar != NULL) return 0;
+		
+		verificar = strstr(nome_variavel, "\t");
+		if (verificar != NULL) return 0;
+		
+		verificar = strstr(nome_variavel, " ");
+		if (verificar != NULL) return 0;
+		
+		verificar = strstr(nome_variavel, "\0");
+		if (verificar != NULL) return 0;
+	}
+	
+	return eh_letra;
 }
+
+int is_valid_variable(const char *str) {
+    // Verifica se a string é "if", "else" ou "while"
+    if (strcmp(str, "if") == 0 || strcmp(str, "else") == 0 || strcmp(str, "while") == 0) {
+        return 0;
+    }
+
+    // Verifica se o primeiro caractere é uma letra ou '_'
+    if (!isalpha(str[0]) && str[0] != '_') {
+        return 0;
+    }
+
+    // Verifica os demais caracteres
+    int i = 1;
+    while (str[i] != '\0') {
+        if (!isalnum(str[i]) && str[i] != '_') {
+            return 0;
+        }
+        i++;
+    }
+
+    return 1;
+}
+
 
 // Função apenas para testar o if, será apgada depois
 
